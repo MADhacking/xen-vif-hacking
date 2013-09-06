@@ -20,8 +20,10 @@
 dir=$(dirname "$0")
 . "${dir}/vif-common.sh"
 
-ip_addr=${ip%:*}
-ip_mask=${ip#*:}
+ip_addr=${ip%%:*}
+ip_temp=${ip%:*}
+ip_mask=${ip_temp#*:}
+ip_gate=${ip##*:}
 
 case "${command}" in
 	online)
@@ -37,7 +39,7 @@ case "${command}" in
 		;;
 esac
 
-${cmdprefix} ip route ${ipcmd} default via ${ip_addr}
+${cmdprefix} ip route ${ipcmd} default via ${ip_gate} metric 4
 
 call_hooks vif post
 
