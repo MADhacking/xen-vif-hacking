@@ -18,28 +18,31 @@
 #============================================================================
 
 dir=$(dirname "$0")
+# shellcheck disable=SC1090
 . "${dir}/vif-common.sh"
 
+# shellcheck disable=SC2154
 ip_addr=${ip%%:*}
 ip_temp=${ip%:*}
 ip_mask=${ip_temp#*:}
 ip_gate=${ip##*:}
 
+# shellcheck disable=SC2154
 case "${command}" in
 	online)
-		ifconfig ${dev} ${ip_addr} netmask ${ip_mask} up
-		echo 1 >/proc/sys/net/ipv4/conf/${dev}/proxy_arp
+		ifconfig "${dev}" "${ip_addr}" netmask "${ip_mask}" up
+		echo 1 >/proc/sys/net/ipv4/conf/"${dev}"/proxy_arp
 		ipcmd='add'
 		cmdprefix=''
 		;;
 	offline)
-		do_without_error ifdown ${dev}
+		do_without_error ifdown "${dev}"
 		ipcmd='del'
 		cmdprefix='do_without_error'
 		;;
 esac
 
-${cmdprefix} ip route ${ipcmd} default via ${ip_gate} metric 4
+${cmdprefix} ip route ${ipcmd} default via "${ip_gate}" metric 4
 
 call_hooks vif post
 
